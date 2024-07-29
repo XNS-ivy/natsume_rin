@@ -28,7 +28,7 @@ async function sock() {
     const bodyMessage = m.messages[0];
     const { msg } = require("./libs/message.js");
     try {
-        await msg(bodyMessage);
+        await msg(bodyMessage,rin);
     } catch (err) {
         console.error(err)
     }

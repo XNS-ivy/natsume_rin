@@ -1,0 +1,13 @@
+{
+    "identity": {
+        "name": "Natsume Rin",
+        "version": "1.0",
+        "prefix": ".",
+        "greet": "Hi my name is Rin!"
+    },
+    "menu": [
+        "help",
+        "bot",
+        "sc"
+    ]
+}
