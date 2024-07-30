@@ -8,7 +8,8 @@ async function sock() {
         browser: ["Natsume_Rin","Chrome","1.0.0"],
         auth: state,
         logger: pino({level: "silent"}),
-        syncFullHistory: false
+        syncFullHistory: false,
+        generateHighQualityLinkPreview: true,
     });
     rin.ev.on("creds.update", saveCreds);
     rin.ev.on("connection.update", async ({connection}) =>{

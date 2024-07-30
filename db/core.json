@@ -8,6 +8,12 @@
     "menu": [
         "help",
         "bot",
-        "sc"
-    ]
+        "sc",
+        "menu"
+    ],
+    "reply":{
+        "noCommand": "Sorry command not found try to type '.menu'",
+        "help": "Try to type .menu",
+        "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin"
+    }
 }
