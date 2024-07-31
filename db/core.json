@@ -11,11 +11,15 @@
         "sc",
         "menu",
         "wikiid",
-        "wikien"
+        "wikien",
+        "gemini"
     ],
     "reply":{
         "noCommand": "Sorry command not found try to type '.menu'",
         "help": "Try to type .menu",
         "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin"
+    },
+    "ai": {
+        "gemini" : "AIzaSyCNRkUQFDTYlO6lP0rOax_M1Lm-E_2qkyw"
     }
 }

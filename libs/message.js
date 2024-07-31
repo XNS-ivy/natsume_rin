@@ -1,5 +1,8 @@
 const core = require("../db/core.json");
 const axios = require("axios");
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const genAI = new GoogleGenerativeAI(core.ai.gemini);
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 async function msg(m, rinReply) {
     const processMsg = await messageProces(m);
@@ -68,6 +71,9 @@ async function command(m, rinReply, query, argumen) {
             const region = query === core.menu[4] ? "id" : "en"; 
             text = await wiki(argumen, region);
             break;
+        case core.menu[6]:
+            text = await Gemini(argumen);
+            break;
         default:
             text = core.reply.noCommand;
             break;
@@ -127,7 +133,18 @@ async function wiki(argumen, region) {
         return `Error: ${err.message}`;
     }
 }
-
+async function Gemini(argumen) {
+    try {
+        const result = await model.generateContent([argumen]);
+        if (typeof result.response.text === 'function') {
+            return result.response.text();  // Panggil fungsi jika `text` adalah fungsi
+        } else {
+            return result.response.text;    // Cetak teks jika `text` adalah string
+        }
+    } catch (err) {
+        return `Error: ${err}`
+    }
+}
 // -------------------------
 async function replyText(chat, rinReply, text) {
     const id = chat.key.remoteJid;

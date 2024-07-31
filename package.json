@@ -4,6 +4,7 @@
   "description": "Whatsapp Bot",
   "main": "index.js",
   "dependencies": {
+    "@google/generative-ai": "^0.16.0",
     "@whiskeysockets/baileys": "^6.7.5",
     "async": "^3.2.3",
     "async-lock": "^1.4.1",
