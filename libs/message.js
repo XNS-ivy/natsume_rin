@@ -1,8 +1,15 @@
+require('dotenv').config();
 const core = require("../db/core.json");
 const axios = require("axios");
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const genAI = new GoogleGenerativeAI(core.ai.gemini);
+const { RateLimiterMemory } = require('rate-limiter-flexible');
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const rateLimiter = new RateLimiterMemory({
+    points: 2, // point
+    duration: 15, // in second
+});
 
 async function msg(m, rinReply) {
     const processMsg = await messageProces(m);
@@ -25,7 +32,13 @@ async function chatlog(chat, rinReply, m) {
         const argumen = args.join(" ");
 
         if (core.menu.includes(query)) {
-            await command(m, rinReply, query, argumen);
+            try {
+                await rateLimiter.consume(query);
+                await command(m, rinReply, query, argumen);
+            } catch (rejRes) {
+                console.error(`Rate limit exceeded for command: ${query}`);
+                replyText(m, rinReply, `Cooldown 5 second!`);
+            }
         } else {
             replyText(m, rinReply, core.reply.noCommand);
         }
@@ -37,8 +50,8 @@ async function messageProces(m) {
 
     const getText = getType === "conversation" ? m.message.conversation :
         getType === "extendedTextMessage" ? m.message.extendedTextMessage.text :
-        getType === "imageMessage" ? m.message.imageMessage.caption :
-        getType === "stickerMessage" ? "*Pesan Stiker*" : "";
+            getType === "imageMessage" ? m.message.imageMessage.caption :
+                getType === "stickerMessage" ? "*Pesan Stiker*" : "";
 
     const getPhoneNumber = m.key.participant || m.key.remoteJid;
     const phoneNumber = getPhoneNumber.split('@')[0];
@@ -68,7 +81,7 @@ async function command(m, rinReply, query, argumen) {
             break;
         case core.menu[4]:
         case core.menu[5]:
-            const region = query === core.menu[4] ? "id" : "en"; 
+            const region = query === core.menu[4] ? "id" : "en";
             text = await wiki(argumen, region);
             break;
         case core.menu[6]:
@@ -78,11 +91,11 @@ async function command(m, rinReply, query, argumen) {
             text = core.reply.noCommand;
             break;
     }
-    if(text) replyText(m, rinReply, text);
+    if (text) replyText(m, rinReply, text);
 }
 // ----------------------- command function
 async function wiki(argumen, region) {
-    if(!argumen) return text = `Please add argumen after query Ex: ".wikien anime"`;
+    if (!argumen) return text = `Please add argumen after query Ex: ".wikien anime"`;
     try {
         const response = await axios.get(`https://${region}.wikipedia.org/w/api.php`, {
             params: {
