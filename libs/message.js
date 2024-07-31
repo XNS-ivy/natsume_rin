@@ -1,19 +1,20 @@
 const core = require("../db/core.json");
+const axios = require("axios");
 
 async function msg(m, rinReply) {
     const processMsg = await messageProces(m);
     await chatlog(processMsg, rinReply, m);
-    // console.log(m)
-};
+}
 
 async function chatlog(chat, rinReply, m) {
-    if (chat.text === "" || undefined) return null;
-    console.log(`\t! New Message !
-            > Name \t\t: ${chat.name}
-            > Number \t\t: ${chat.number}
-            > Text \t\t: ${chat.text}
-            > Message Type \t: ${chat.type}
-            > On Group \t\t: ${chat.group}\n`);
+    if (!chat.text) return;
+
+    console.log(`\t! New Chat !
+        > Name \t\t: ${chat.name}
+        > Number \t: ${chat.number}
+        > On Group \t: ${chat.group}
+        > Chat Type \t: ${chat.type}
+        > Text \t\t: ${chat.text}\n`);
 
     if (chat.text.startsWith(core.identity.prefix)) {
         const prefix = chat.text.slice(core.identity.prefix.length).trim();
@@ -25,26 +26,23 @@ async function chatlog(chat, rinReply, m) {
         } else {
             replyText(m, rinReply, core.reply.noCommand);
         }
-    } else {
-        // do nothing 
     }
-};
+}
 
 async function messageProces(m) {
     const getType = Object.keys(m.message)[0];
 
     const getText = getType === "conversation" ? m.message.conversation :
         getType === "extendedTextMessage" ? m.message.extendedTextMessage.text :
-            getType === "imageMessage" ? m.message.imageMessage.caption :
-                getType === "stickerMessage" ? "*Sticker Message*" :
-                    undefined;
+        getType === "imageMessage" ? m.message.imageMessage.caption :
+        getType === "stickerMessage" ? "*Pesan Stiker*" : "";
 
-    const getPhoneNumber = m.key.participant === undefined ?
-        m.key.remoteJid : m.key.participant
-    const phoneNumber = await getPhoneNumber.split('@')[0];
+    const getPhoneNumber = m.key.participant || m.key.remoteJid;
+    const phoneNumber = getPhoneNumber.split('@')[0];
     const name = m.pushName;
     const target = m.key.remoteJid;
-    const isOnGroup = m.key.participant === undefined || "" ? false : true;
+    const isOnGroup = m.key.participant !== undefined && m.key.participant !== "";
+
     return {
         type: getType,
         text: getText,
@@ -53,25 +51,87 @@ async function messageProces(m) {
         person: target,
         group: isOnGroup
     };
-};
+}
+
 async function command(m, rinReply, query, argumen) {
     let text;
+    let image;
     switch (query) {
         case core.menu[0]:
             text = core.reply.help;
-            replyText(m, rinReply, text);
             break;
         case core.menu[2]:
             text = core.reply.sourceCode;
-            replyText(m,rinReply,text);
+            break;
+        case core.menu[4]:
+        case core.menu[5]:
+            const region = query === core.menu[4] ? "id" : "en"; 
+            text = await wiki(argumen, region);
             break;
         default:
+            text = core.reply.noCommand;
             break;
+    }
+    if(text) replyText(m, rinReply, text);
+}
+// ----------------------- command function
+async function wiki(argumen, region) {
+    if(!argumen) return text = `Please add argumen after query Ex: ".wikien anime"`;
+    try {
+        const response = await axios.get(`https://${region}.wikipedia.org/w/api.php`, {
+            params: {
+                format: 'json',
+                action: 'query',
+                list: 'search',
+                srsearch: argumen,
+                srprop: '',
+                srlimit: 1,
+                utf8: 1
+            }
+        });
+
+        const searchResult = response.data.query.search;
+        if (searchResult.length > 0) {
+            const firstResult = searchResult[0];
+            const title = firstResult.title;
+
+            const articleResponse = await axios.get(`https://${region}.wikipedia.org/w/api.php`, {
+                params: {
+                    format: 'json',
+                    action: 'query',
+                    prop: 'extracts',
+                    exintro: true,
+                    explaintext: true,
+                    redirects: 1,
+                    titles: title
+                }
+            });
+
+            const pages = articleResponse.data.query.pages;
+            const pageIds = Object.keys(pages);
+            if (pageIds.length > 0) {
+                const extract = pages[pageIds[0]].extract;
+                if (extract) {
+                    return `Article: ${title}\n\n${extract}`;
+                } else {
+                    return `Sorry, article not found!`;
+                }
+            } else {
+                return `Sorry, article not found!`;
+            }
+        } else {
+            return `Sorry, result not found for : "${argumen}".`;
+        }
+    } catch (err) {
+        console.error('Kesalahan saat mengambil data dari Wikipedia:', err);
+        return `Error: ${err.message}`;
     }
 }
 
+// -------------------------
 async function replyText(chat, rinReply, text) {
     const id = chat.key.remoteJid;
     await rinReply.sendMessage(id, { text: text }, { quoted: chat });
 }
+
 module.exports = { msg };

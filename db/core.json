@@ -7,9 +7,11 @@
     },
     "menu": [
         "help",
-        "bot",
+        "menu",
         "sc",
-        "menu"
+        "menu",
+        "wikiid",
+        "wikien"
     ],
     "reply":{
         "noCommand": "Sorry command not found try to type '.menu'",
