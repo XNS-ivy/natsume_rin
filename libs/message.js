@@ -1,14 +1,28 @@
 require('dotenv').config();
-const core = require("../db/core.json");
+const fs = require("fs").promises;
 const axios = require("axios");
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
+const corePath = "./db/core.json";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+let core = {};
+async function loadCore() {
+    try {
+        const data = await fs.readFile(corePath, 'utf8');
+        core = JSON.parse(data);
+    } catch (err) {
+        console.error('Error reading core.json:', err);
+    }
+}
+loadCore();
+
 const rateLimiter = new RateLimiterMemory({
-    points: 2, // point
-    duration: 15, // in second
+    points: 1, // point
+    duration: 30, // in second
+});
+const stopLimit = new RateLimiterMemory({
+    points: 1,
+    duration: 120,
 });
 
 async function msg(m, rinReply) {
@@ -17,7 +31,10 @@ async function msg(m, rinReply) {
 }
 
 async function chatlog(chat, rinReply, m) {
-    if (!chat.text) return;
+    if (!core.bans || !Array.isArray(core.bans)) {
+        console.error("Bans list is undefined or not an array.");
+        return;
+    }
 
     console.log(`\t! New Chat !
         > Name \t\t: ${chat.name}
@@ -37,17 +54,36 @@ async function chatlog(chat, rinReply, m) {
                 await command(m, rinReply, query, argumen);
             } catch (rejRes) {
                 console.error(`Rate limit exceeded for command: ${query}`);
-                replyText(m, rinReply, `Cooldown 5 second!`);
+                try {
+                    await stopLimit.consume(1);
+                    await replyText(m, rinReply, core.reply.cooldown);
+                } catch (stopLimitError) {
+                    await bans(m, rinReply, chat.number);
+                }
             }
         } else {
-            replyText(m, rinReply, core.reply.noCommand);
+            try {
+                await rateLimiter.consume('noCommand');
+                await replyText(m, rinReply, core.reply.noCommand);
+            } catch (rateLimitError) {
+                try {
+                    await stopLimit.consume(1);
+                    await replyText(m, rinReply, core.reply.cooldown);
+                } catch (stopLimitError) {
+                    await bans(m, rinReply, chat.number);
+                }
+            }
         }
     }
 }
 
 async function messageProces(m) {
-    const getType = Object.keys(m.message)[0];
+    if (!m.message || typeof m.message !== 'object') {
+        console.error('Invalid message format:', m.message);
+        return {};
+    }
 
+    const getType = Object.keys(m.message)[0];
     const getText = getType === "conversation" ? m.message.conversation :
         getType === "extendedTextMessage" ? m.message.extendedTextMessage.text :
             getType === "imageMessage" ? m.message.imageMessage.caption :
@@ -71,7 +107,6 @@ async function messageProces(m) {
 
 async function command(m, rinReply, query, argumen) {
     let text;
-    let image;
     switch (query) {
         case core.menu[0]:
             text = core.reply.help;
@@ -87,17 +122,39 @@ async function command(m, rinReply, query, argumen) {
         case core.menu[6]:
             text = await Gemini(argumen);
             break;
+        case core.menu[7]:
+            text = await weather(argumen);
+            console.log("trigger weather");
+            break;
         default:
             text = core.reply.noCommand;
             break;
     }
     if (text) replyText(m, rinReply, text);
 }
-// ----------------------- command function
-async function wiki(argumen, region) {
-    if (!argumen) return text = `Please add argumen after query Ex: ".wikien anime"`;
+
+async function bans(m, rinReply, number) {
     try {
-        const response = await axios.get(`https://${region}.wikipedia.org/w/api.php`, {
+        const data = await fs.readFile(corePath, 'utf8');
+        const jsonData = JSON.parse(data);
+
+        if (!jsonData.bans.includes(number)) {
+            jsonData.bans.push(number);
+            await fs.writeFile(corePath, JSON.stringify(jsonData, null, 2), 'utf8');
+            await replyText(m, rinReply, core.reply.ban);
+            process.exit(1);
+        }
+    } catch (err) {
+        console.error('Error processing bans:', err);
+        await replyText(m, rinReply, 'An error occurred while processing the ban.');
+    }
+}
+
+async function wiki(argumen, region) {
+    if (!argumen) return `Please add argument after query Ex: ".wikien anime"`;
+    try {
+        const url = `https://${region}.wikipedia.org/w/api.php`;
+        const responseUrl = await axios.get(url, {
             params: {
                 format: 'json',
                 action: 'query',
@@ -109,12 +166,11 @@ async function wiki(argumen, region) {
             }
         });
 
-        const searchResult = response.data.query.search;
+        const searchResult = responseUrl.data.query.search;
         if (searchResult.length > 0) {
             const firstResult = searchResult[0];
             const title = firstResult.title;
-
-            const articleResponse = await axios.get(`https://${region}.wikipedia.org/w/api.php`, {
+            const articleResponse = await axios.get(url, {
                 params: {
                     format: 'json',
                     action: 'query',
@@ -146,22 +202,49 @@ async function wiki(argumen, region) {
         return `Error: ${err.message}`;
     }
 }
+
 async function Gemini(argumen) {
     try {
+        const apiKey = process.env.GEMINI_API;
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         const result = await model.generateContent([argumen]);
-        if (typeof result.response.text === 'function') {
-            return result.response.text();  // Panggil fungsi jika `text` adalah fungsi
-        } else {
-            return result.response.text;    // Cetak teks jika `text` adalah string
-        }
+        return result.response.text;
     } catch (err) {
-        return `Error: ${err}`
+        return `Error: ${err}`;
     }
 }
-// -------------------------
-async function replyText(chat, rinReply, text) {
-    const id = chat.key.remoteJid;
-    await rinReply.sendMessage(id, { text: text }, { quoted: chat });
+
+async function weather(city) {
+    try {
+        const apiKey = process.env.WHEATER;
+        const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+        const responseUrl = await axios.get(url);
+        const data = responseUrl.data;
+        const weatherDescription = data.weather[0].description;
+        const temperature = data.main.temp;
+        const feelsLike = data.main.feels_like;
+        const humidity = data.main.humidity;
+        const windSpeed = data.wind.speed;
+
+        return `
+        Weather in ${city}:
+        - Description: ${weatherDescription}
+        - Temperature: ${temperature}°C
+        - Feels Like: ${feelsLike}°C
+        - Humidity: ${humidity}%
+        - Wind Speed: ${windSpeed} m/s
+        `;
+    } catch (err) {
+        console.error('Error fetching the weather data:', err);
+        return `Error: ${err.message}`;
+    }
+}
+
+async function replyText(m, rinReply, text) {
+    const id = m.key.remoteJid;
+    await rinReply.sendMessage(id, { text: text }, { quoted: m });
 }
 
 module.exports = { msg };

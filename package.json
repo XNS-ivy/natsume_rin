@@ -15,6 +15,7 @@
     "audio-type": "^2.2.1",
     "axios": "^1.7.2",
     "cache-manager": "^4.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "clone": "^2.1.2",
     "codec-parser": "^2.4.3",
     "combined-stream": "^1.0.8",
@@ -81,7 +82,8 @@
     "ws": "^8.18.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

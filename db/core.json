@@ -1,22 +1,27 @@
 {
-    "identity": {
-        "name": "Natsume Rin",
-        "version": "1.0",
-        "prefix": ".",
-        "greet": "Hi my name is Rin!"
-    },
-    "menu": [
-        "help",
-        "menu",
-        "sc",
-        "menu",
-        "wikiid",
-        "wikien",
-        "gemini"
-    ],
-    "reply":{
-        "noCommand": "Sorry command not found try to type '.menu'",
-        "help": "Try to type .menu",
-        "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin"
-    }
+  "identity": {
+    "name": "Natsume Rin",
+    "version": "1.0",
+    "prefix": ".",
+    "greet": "Hi there, my name is Rin!"
+  },
+  "menu": [
+    "help",
+    "menu",
+    "sc",
+    "menu",
+    "wikiid",
+    "wikien",
+    "gemini",
+    "wheater"
+  ],
+  "reply": {
+    "noCommand": "Sorry command not found try to type '.menu'",
+    "help": "Try to type .menu",
+    "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin",
+    "cooldown": "Cooldown 10 Second!",
+    "ban": "Youre get banned and dunked by Rin!"
+  },
+  "bans": [
+  ]
 }
