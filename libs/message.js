@@ -4,6 +4,8 @@ const axios = require("axios");
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const corePath = "./db/core.json";
+let WA_DEFAULT_EPHEMERAL = false;
+let willban;
 
 let core = {};
 async function loadCore() {
@@ -26,16 +28,19 @@ const stopLimit = new RateLimiterMemory({
 });
 
 async function msg(m, rinReply) {
+    loadCore();
     const processMsg = await messageProces(m);
     await chatlog(processMsg, rinReply, m);
 }
 
 async function chatlog(chat, rinReply, m) {
     if (!core.bans || !Array.isArray(core.bans)) {
-        console.error("Bans list is undefined or not an array.");
+        console.log("loading core....");
         return;
     }
-
+    if (core.bans.includes(chat.number)) {
+        return;
+    }
     console.log(`\t! New Chat !
         > Name \t\t: ${chat.name}
         > Number \t: ${chat.number}
@@ -51,7 +56,7 @@ async function chatlog(chat, rinReply, m) {
         if (core.menu.includes(query)) {
             try {
                 await rateLimiter.consume(query);
-                await command(m, rinReply, query, argumen);
+                await command(m, rinReply, query, argumen, chat.number);
             } catch (rejRes) {
                 console.error(`Rate limit exceeded for command: ${query}`);
                 try {
@@ -79,10 +84,8 @@ async function chatlog(chat, rinReply, m) {
 
 async function messageProces(m) {
     if (!m.message || typeof m.message !== 'object') {
-        console.error('Invalid message format:', m.message);
         return {};
     }
-
     const getType = Object.keys(m.message)[0];
     const getText = getType === "conversation" ? m.message.conversation :
         getType === "extendedTextMessage" ? m.message.extendedTextMessage.text :
@@ -94,7 +97,9 @@ async function messageProces(m) {
     const name = m.pushName;
     const target = m.key.remoteJid;
     const isOnGroup = m.key.participant !== undefined && m.key.participant !== "";
-
+    if (getType === "extendedTextMessage") {
+        WA_DEFAULT_EPHEMERAL = 604800;
+    }
     return {
         type: getType,
         text: getText,
@@ -105,7 +110,7 @@ async function messageProces(m) {
     };
 }
 
-async function command(m, rinReply, query, argumen) {
+async function command(m, rinReply, query, argumen, number) {
     let text;
     switch (query) {
         case core.menu[0]:
@@ -126,13 +131,47 @@ async function command(m, rinReply, query, argumen) {
             text = await weather(argumen);
             console.log("trigger weather");
             break;
+        case core.menu[8]:
+            if (!core.admins.includes(number)) {
+                text = "youre not admin";
+            } else {
+                willban = true;
+                text = await banning(m, rinReply, argumen, willban);
+            }
+            break;
+        case core.menu[9]:
+            if (!core.admins.includes(number)) {
+                text = "youre not admin";
+            } else {
+                willban = false;
+                text = await banning(m, rinReply, argumen, willban);
+            }
+            break;
         default:
             text = core.reply.noCommand;
             break;
     }
     if (text) replyText(m, rinReply, text);
 }
+function isPhoneNumber(value) {
+    const phonePattern = /^[0-9]{10,15}$/;
+    return phonePattern.test(value);
+}
+async function banning(m, rinReply, number, willban) {
+    const phone = number.startsWith('@') ? number.slice(1) : number;
 
+    if (isPhoneNumber(phone)) {
+        if (willban === true) {
+            await bans(m, rinReply, phone);
+            return "You are BANNED!";
+        } else if (willban === false) {
+            await unban(m, rinReply, phone);
+            return "Youre no longer banned";
+        }
+    } else {
+        return "Not a phone number";
+    }
+}
 async function bans(m, rinReply, number) {
     try {
         const data = await fs.readFile(corePath, 'utf8');
@@ -142,14 +181,29 @@ async function bans(m, rinReply, number) {
             jsonData.bans.push(number);
             await fs.writeFile(corePath, JSON.stringify(jsonData, null, 2), 'utf8');
             await replyText(m, rinReply, core.reply.ban);
-            process.exit(1);
         }
     } catch (err) {
         console.error('Error processing bans:', err);
         await replyText(m, rinReply, 'An error occurred while processing the ban.');
     }
 }
-
+async function unban(m, rinReply, number) {
+    try {
+        const data = await fs.readFile(corePath, 'utf8');
+        const jsonData = JSON.parse(data);
+        const index = jsonData.bans.indexOf(number);
+        if (index !== -1) {
+            jsonData.bans.splice(index, 1);
+            await fs.writeFile(corePath, JSON.stringify(jsonData, null, 2), 'utf8');
+            await replyText(m, rinReply, 'The number has been unbanned.');
+        } else {
+            await replyText(m, rinReply, 'Number is not banned.');
+        }
+    } catch (err) {
+        console.error('Error processing unban:', err);
+        await replyText(m, rinReply, 'An error occurred while processing the unban.');
+    }
+}
 async function wiki(argumen, region) {
     if (!argumen) return `Please add argument after query Ex: ".wikien anime"`;
     try {
@@ -244,7 +298,11 @@ async function weather(city) {
 
 async function replyText(m, rinReply, text) {
     const id = m.key.remoteJid;
-    await rinReply.sendMessage(id, { text: text }, { quoted: m });
+    await rinReply.sendMessage(id,
+        { text: text }, {
+        quoted: m,
+        ephemeralExpiration: WA_DEFAULT_EPHEMERAL
+    });
 }
 
 module.exports = { msg };

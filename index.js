@@ -1,4 +1,4 @@
-const {default: rin_sock, useMultiFileAuthState} = require("@whiskeysockets/baileys");
+const {default: rin_sock, useMultiFileAuthState, BufferJSON} = require("@whiskeysockets/baileys");
 const pino = require("pino");
 
 async function sock() {
@@ -9,7 +9,9 @@ async function sock() {
         auth: state,
         logger: pino({level: "silent"}),
         syncFullHistory: false,
-        generateHighQualityLinkPreview: true,
+        generateHighQualityLinkPreview: false,
+        connectTimeoutMs: 10000,
+        emitOwnEvents: false,
     });
     rin.ev.on("creds.update", saveCreds);
     rin.ev.on("connection.update", async ({connection}) =>{
@@ -35,7 +37,4 @@ async function sock() {
     }
     });
 }
-module.exports = (req, res) => {
-  res.status(200).send('Hello from Vercel!');
-};
 sock();

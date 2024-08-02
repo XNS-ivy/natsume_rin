@@ -13,15 +13,19 @@
     "wikiid",
     "wikien",
     "gemini",
-    "wheater"
+    "wheater",
+    "ban",
+    "unban"
   ],
   "reply": {
     "noCommand": "Sorry command not found try to type '.menu'",
     "help": "Try to type .menu",
     "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin",
     "cooldown": "Cooldown 10 Second!",
-    "ban": "Youre get banned and dunked by Rin!"
+    "ban": "Youre cancled and dunked by Rin!"
   },
-  "bans": [
+  "bans": [],
+  "admins": [
+    "6283152066015"
   ]
 }
