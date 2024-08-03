@@ -6,6 +6,7 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 const corePath = "./db/core.json";
 let WA_DEFAULT_EPHEMERAL = false;
 let willban;
+let apiKey;
 
 let core = {};
 async function loadCore() {
@@ -28,7 +29,6 @@ const stopLimit = new RateLimiterMemory({
 });
 
 async function msg(m, rinReply) {
-    loadCore();
     const processMsg = await messageProces(m);
     await chatlog(processMsg, rinReply, m);
 }
@@ -129,7 +129,6 @@ async function command(m, rinReply, query, argumen, number) {
             break;
         case core.menu[7]:
             text = await weather(argumen);
-            console.log("trigger weather");
             break;
         case core.menu[8]:
             if (!core.admins.includes(number)) {
@@ -259,19 +258,23 @@ async function wiki(argumen, region) {
 
 async function Gemini(argumen) {
     try {
-        const apiKey = process.env.GEMINI_API;
+        apiKey = process.env.GEMINI_API;
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
         const result = await model.generateContent([argumen]);
-        return result.response.text;
+        if (typeof result.response.text === 'function') {
+            return result.response.text();  // Panggil fungsi jika `text` adalah fungsi
+        } else {
+            return result.response.text;    // Cetak teks jika `text` adalah string
+        }
     } catch (err) {
-        return `Error: ${err}`;
+        return `Error: ${err}`
     }
 }
 
 async function weather(city) {
     try {
-        const apiKey = process.env.WHEATER;
+        apiKey = process.env.WHEATER;
         const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
         const responseUrl = await axios.get(url);

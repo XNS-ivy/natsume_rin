@@ -15,14 +15,15 @@
     "gemini",
     "wheater",
     "ban",
-    "unban"
+    "unban",
+    "shutdown"
   ],
   "reply": {
     "noCommand": "Sorry command not found try to type '.menu'",
     "help": "Try to type .menu",
     "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin",
     "cooldown": "Cooldown 10 Second!",
-    "ban": "Youre cancled and dunked by Rin!"
+    "ban": "Youre cancelled and dunked by Rin!"
   },
   "bans": [],
   "admins": [
