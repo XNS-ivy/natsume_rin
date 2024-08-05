@@ -25,7 +25,8 @@
     "cooldown": "Cooldown 10 Second!",
     "ban": "Youre cancelled and dunked by Rin!"
   },
-  "bans": [],
+  "bans": [
+  ],
   "admins": [
     "6283152066015"
   ]
