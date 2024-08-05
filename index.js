@@ -9,7 +9,7 @@ async function sock() {
         auth: state,
         logger: pino({level: "silent"}),
         syncFullHistory: false,
-        generateHighQualityLinkPreview: false,
+        generateHighQualityLinkPreview: true,
         connectTimeoutMs: 10000,
         emitOwnEvents: false,
     });
