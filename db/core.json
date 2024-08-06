@@ -21,7 +21,7 @@
   "reply": {
     "noCommand": "Sorry command not found try to type '.menu'",
     "help": "Try to type .menu",
-    "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin",
+    "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin \n Dont forget to give star! <3",
     "cooldown": "Cooldown 10 Second!",
     "ban": "Youre cancelled and dunked by Rin!"
   },

@@ -1,12 +1,9 @@
-require('dotenv').config();
 const fs = require("fs").promises;
-const axios = require("axios");
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { wiki, weather, Gemini } = require("./external-func");
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 const corePath = "./db/core.json";
 let WA_DEFAULT_EPHEMERAL = false;
 let willban;
-let apiKey;
 
 let core = {};
 async function loadCore() {
@@ -29,6 +26,7 @@ const stopLimit = new RateLimiterMemory({
 });
 
 async function msg(m, rinReply) {
+    if (!m.message) return;
     const processMsg = await messageProces(m);
     await chatlog(processMsg, rinReply, m);
 }
@@ -84,22 +82,21 @@ async function chatlog(chat, rinReply, m) {
 
 async function messageProces(m) {
     if (!m.message || typeof m.message !== 'object') {
-        return {};
+        return;
     }
     const getType = Object.keys(m.message)[0];
-    const getText = getType === "conversation" ? m.message.conversation :
-        getType === "extendedTextMessage" ? m.message.extendedTextMessage.text :
-            getType === "imageMessage" ? m.message.imageMessage.caption :
-                getType === "stickerMessage" ? "*Pesan Stiker*" : "";
-
+    const getText = getType == "conversation" ? m.message.conversation :
+        getType == "extendedTextMessage" ? m.message.extendedTextMessage.text :
+            getType == "imageMessage" ? m.message.imageMessage.caption :
+                getType == "stickerMessage" ? "*Sticker*" : getType == "videoMessage" ? "" : "";
+    if (getType == "extendedTextMessage") {
+        WA_DEFAULT_EPHEMERAL = 604800;
+    }
     const getPhoneNumber = m.key.participant || m.key.remoteJid;
     const phoneNumber = getPhoneNumber.split('@')[0];
     const name = m.pushName;
     const target = m.key.remoteJid;
     const isOnGroup = m.key.participant !== undefined && m.key.participant !== "";
-    if (getType === "extendedTextMessage") {
-        WA_DEFAULT_EPHEMERAL = 604800;
-    }
     return {
         type: getType,
         text: getText,
@@ -146,6 +143,16 @@ async function command(m, rinReply, query, argumen, number) {
                 text = await banning(m, rinReply, argumen, willban);
             }
             break;
+        case core.menu[10]:
+            if (!core.admins.includes(number)) {
+                text = "youre not admin";
+            } else {
+                text = "Bye bye master!";
+                setInterval(async () => {
+                    process.exit();
+                }, 5000);
+            }
+            break;
         default:
             text = core.reply.noCommand;
             break;
@@ -181,6 +188,7 @@ async function bans(m, rinReply, number) {
             await fs.writeFile(corePath, JSON.stringify(jsonData, null, 2), 'utf8');
             await replyText(m, rinReply, core.reply.ban);
         }
+        loadCore();
     } catch (err) {
         console.error('Error processing bans:', err);
         await replyText(m, rinReply, 'An error occurred while processing the ban.');
@@ -198,107 +206,12 @@ async function unban(m, rinReply, number) {
         } else {
             await replyText(m, rinReply, 'Number is not banned.');
         }
+        loadCore();
     } catch (err) {
         console.error('Error processing unban:', err);
         await replyText(m, rinReply, 'An error occurred while processing the unban.');
     }
 }
-async function wiki(argumen, region) {
-    if (!argumen) return `Please add argument after query Ex: ".wikien anime"`;
-    try {
-        const url = `https://${region}.wikipedia.org/w/api.php`;
-        const responseUrl = await axios.get(url, {
-            params: {
-                format: 'json',
-                action: 'query',
-                list: 'search',
-                srsearch: argumen,
-                srprop: '',
-                srlimit: 1,
-                utf8: 1
-            }
-        });
-
-        const searchResult = responseUrl.data.query.search;
-        if (searchResult.length > 0) {
-            const firstResult = searchResult[0];
-            const title = firstResult.title;
-            const articleResponse = await axios.get(url, {
-                params: {
-                    format: 'json',
-                    action: 'query',
-                    prop: 'extracts',
-                    exintro: true,
-                    explaintext: true,
-                    redirects: 1,
-                    titles: title
-                }
-            });
-
-            const pages = articleResponse.data.query.pages;
-            const pageIds = Object.keys(pages);
-            if (pageIds.length > 0) {
-                const extract = pages[pageIds[0]].extract;
-                if (extract) {
-                    return `Article: ${title}\n\n${extract}`;
-                } else {
-                    return `Sorry, article not found!`;
-                }
-            } else {
-                return `Sorry, article not found!`;
-            }
-        } else {
-            return `Sorry, result not found for : "${argumen}".`;
-        }
-    } catch (err) {
-        console.error('Kesalahan saat mengambil data dari Wikipedia:', err);
-        return `Error: ${err.message}`;
-    }
-}
-
-async function Gemini(argumen) {
-    try {
-        apiKey = process.env.GEMINI_API;
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        const result = await model.generateContent([argumen]);
-        if (typeof result.response.text === 'function') {
-            return result.response.text();  // Panggil fungsi jika `text` adalah fungsi
-        } else {
-            return result.response.text;    // Cetak teks jika `text` adalah string
-        }
-    } catch (err) {
-        return `Error: ${err}`
-    }
-}
-
-async function weather(city) {
-    try {
-        apiKey = process.env.WHEATER;
-        const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
-        const responseUrl = await axios.get(url);
-        const data = responseUrl.data;
-        const weatherDescription = data.weather[0].description;
-        const temperature = data.main.temp;
-        const feelsLike = data.main.feels_like;
-        const humidity = data.main.humidity;
-        const windSpeed = data.wind.speed;
-
-        return `
-        Weather in ${city}:
-        - Description: ${weatherDescription}
-        - Temperature: ${temperature}°C
-        - Feels Like: ${feelsLike}°C
-        - Humidity: ${humidity}%
-        - Wind Speed: ${windSpeed} m/s
-        `;
-    } catch (err) {
-        console.error('Error fetching the weather data:', err);
-        return `Error: ${err.message}`;
-    }
-}
-
 async function replyText(m, rinReply, text) {
     const id = m.key.remoteJid;
     await rinReply.sendMessage(id,
