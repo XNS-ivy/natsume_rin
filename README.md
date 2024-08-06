@@ -1,5 +1,7 @@
 # natsume_rin
-![Alt Text](./src/icon.jpg);
+![Alt Text](./src/icon.jpg)
+
+
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 > This is a simple whatsapp bot created by XNS-ivy feel free if you want use
@@ -8,4 +10,7 @@
 
 ## Requirement
 
-Bot Whatsapp Thanks To God
+## Get your API
+> [Gemini](https://ai.google.dev/gemini-api)
+> [OpenWeather](https://openweathermap.org/api)
+
