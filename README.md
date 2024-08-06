@@ -1,4 +1,4 @@
-# natsume_rin
+# Natsume Rin
 ![Alt Text](./src/icon.jpg)
 
 
@@ -9,8 +9,11 @@
 # Installation
 
 ## Requirement
+- nodejs
+- cmd / powershell
 
 ## Get your API
-> [Gemini](https://ai.google.dev/gemini-api)
-> [OpenWeather](https://openweathermap.org/api)
+> [Gemini API](https://ai.google.dev/gemini-api)
+
+> [OpenWeather API](https://openweathermap.org/api)
 
