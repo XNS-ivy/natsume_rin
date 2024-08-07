@@ -17,8 +17,8 @@ async function loadCore() {
 loadCore();
 
 const rateLimiter = new RateLimiterMemory({
-    points: 1, // point
-    duration: 30, // in second
+    points: 2, // point
+    duration: 120, // in second
 });
 const stopLimit = new RateLimiterMemory({
     points: 1,
