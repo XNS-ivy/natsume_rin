@@ -1,0 +1,57 @@
+{
+  "identity": {
+    "name": "Natsume Rin",
+    "version": "1.0",
+    "prefix": ".",
+    "greet": "Hi there, my name is Rin!"
+  },
+  "menu": [
+    "help",
+    "menu",
+    "sc",
+    "menu",
+    "wikiid",
+    "wikien",
+    "gemini",
+    "wheater",
+    "ban",
+    "unban",
+    "shutdown",
+    "waifusfw",
+    "waifunsfw",
+    "enablensfw",
+    "disablensfw"
+  ],
+  "rpg": [
+    "inforpg",
+    "register",
+    "dungeon",
+    "backpack"
+  ],
+  "waifu": {
+    "sfw": [
+      "waifu",
+      "neko",
+      "shinobu",
+      "megumin"
+    ],
+    "nsfw": [
+      "waifu",
+      "neko",
+      "trap",
+      "blowjob"
+    ]
+  },
+  "nsfw": false,
+  "reply": {
+    "noCommand": "Sorry command not found try to type '.menu'",
+    "help": "Try to type .menu",
+    "sourceCode": "Here is bot source code : \n https://github.com/XNS-ivy/natsume_rin \n Dont forget to give star! <3",
+    "cooldown": "Cooldown request 1 minute!",
+    "ban": "Your are cancelled and dunked by Rin!"
+  },
+  "bans": [
+  ],
+  "admins": [
+  ]
+}

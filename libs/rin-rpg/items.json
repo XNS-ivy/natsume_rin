@@ -1,0 +1,22 @@
+{
+    "stone":{
+        "itemId": 1,
+        "name": "Stone",
+        "price": 0.1
+    },
+    "planks": {
+        "itemId": 2,
+        "name": "Plank",
+        "price": 0.2
+    },
+    "slime-gel": {
+        "itemId": 3,
+        "name": "Slime gel",
+        "price": 0.5
+    },
+    "small-goblin-crystal": {
+        "itemId": 4,
+        "name": "Small goblin crystal",
+        "price": 0.8
+    }
+}

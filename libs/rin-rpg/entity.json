@@ -1,0 +1,22 @@
+{
+    "entity": [
+        {
+            "enemy": "Slime",
+            "health": 10,
+            "attack": 0.5,
+            "itemId": 3,
+            "expDrop": 2,
+            "startFloor": 1,
+            "maxFloor": 5
+        },
+        {
+            "enemy": "Small Goblin",
+            "health": 15,
+            "attack": 1,
+            "itemId": 4,
+            "expDrop": 3,
+            "startFloor": 1,
+            "maxFloor": 5
+        }
+    ]
+}
