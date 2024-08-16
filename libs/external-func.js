@@ -14,7 +14,7 @@ async function menu(name, prefix) {
         `➤ Gemini Menu.\n` +
         `\t➥ ${prefix}gemini [type-anything]\n\n` +
         `➤ Wheater Condition Menu.\n` +
-        `\t➥ ${prefix}wheater [your-city-location]\n\n` +
+        `\t➥ ${prefix}weather [your-city-location]\n\n` +
         `➤ Random Waifu Image.\n` +
         `\t➥ ${prefix}waifusfw [category]\n` +
         `\t➥ ${prefix}waifusfw [category]\n` +
