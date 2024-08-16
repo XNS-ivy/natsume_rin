@@ -20,7 +20,11 @@
     "waifusfw",
     "waifunsfw",
     "enablensfw",
-    "disablensfw"
+    "disablensfw",
+    "trending",
+    "search",
+    "seasonal",
+    "schedule"
   ],
   "rpg": [
     "inforpg",
@@ -53,5 +57,7 @@
   "bans": [
   ],
   "admins": [
+  ],
+  "premium": [
   ]
 }

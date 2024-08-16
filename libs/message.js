@@ -1,4 +1,4 @@
-const { wiki, weather, Gemini, randomWaifu } = require("./external-func");
+const { wiki, weather, Gemini, randomWaifu, handleAnimeRequest } = require("./external-func");
 const { toggleNSFW, loadCore } = require("./utils");
 const { infoPlayer, registerToGuild, enterDungeon, checkBackpackItems } = require("./rin-rpg/rpg");
 
@@ -52,7 +52,6 @@ async function chatlog(chat, rinReply, m) {
         } catch (rejRes) {
             console.error(`Rate limit exceeded for group: ${m.key.remoteJid}`);
             try {
-                // Konsumsi stopLimit juga berdasarkan ID grup
                 await global.stopLimit.consume(m.key.remoteJid);
                 await replyText(m, rinReply, core.reply.cooldown);
             } catch (stopLimitError) {
@@ -170,6 +169,12 @@ async function command(m, rinReply, query, argumen, number) {
             } else {
                 text = "Youre not admin!";
             }
+            break;
+            case core.menu[15]:
+            case core.menu[16]:
+            case core.menu[17]:
+            case core.menu[18]:
+                text = await handleAnimeRequest(query, argumen);
             break;
         case core.rpg[0]:
             text = await infoPlayer(number);

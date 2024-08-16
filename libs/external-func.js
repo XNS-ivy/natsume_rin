@@ -98,12 +98,61 @@ async function Gemini(argumen) {
 }
 async function randomWaifu(type, category) {
     try {
-      const response = await axios.get(`https://api.waifu.pics/${type}/${category}`);
-      const imageUrl = response.data.url;
-      return imageUrl;
+        const response = await axios.get(`https://api.waifu.pics/${type}/${category}`);
+        const imageUrl = response.data.url;
+        return imageUrl;
     } catch (error) {
-      console.error('Error fetching image: ', error.message);
+        console.error('Error fetching image: ', error.message);
     }
-  }
-  
-module.exports = { wiki, weather, Gemini, randomWaifu };
+}
+
+async function handleAnimeRequest(query, argument) {
+    try {
+        let response;
+        let result = '';
+
+        switch (query) {
+            case 'trending':
+                response = await axios.get('https://api.jikan.moe/v4/top/anime');
+                result = 'Top Trending Anime:\n';
+                response.data.data.forEach((anime, index) => {
+                    result += `${index + 1}. ${anime.title} - Score: ${anime.score}\n`;
+                });
+                return result;
+
+            case 'search':
+                if (!argument) return "Please add the anime name you want to search.";
+                response = await axios.get('https://api.jikan.moe/v4/anime', {
+                    params: { q: argument }
+                });
+                result = `Search Results for "${argument}":\n`;
+                response.data.data.forEach((anime, index) => {
+                    result += `${index + 1}. ${anime.title} - Score: ${anime.score}\n`;
+                });
+                return result;
+
+            case 'seasonal':
+                response = await axios.get('https://api.jikan.moe/v4/seasons/now');
+                result = 'Seasonal Anime:\n';
+                response.data.data.forEach((anime, index) => {
+                    result += `${index + 1}. ${anime.title} - Score: ${anime.score}\n`;
+                });
+                return result;
+
+            case 'schedule':
+                response = await axios.get('https://api.jikan.moe/v4/schedules');
+                result = 'Anime Release Schedule:\n';
+                response.data.data.forEach((anime, index) => {
+                    result += `${index + 1}. ${anime.title} - Aired: ${anime.aired.string}\n`;
+                });
+                return result;
+
+            default:
+                return 'Invalid query type! Please use "trending", "search", "seasonal", or "schedule".';
+        }
+    } catch (error) {
+        return `Error handling anime request: ${error.message}`;
+    }
+}
+
+module.exports = { wiki, weather, Gemini, randomWaifu, handleAnimeRequest };
