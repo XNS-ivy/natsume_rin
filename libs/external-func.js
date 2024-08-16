@@ -1,5 +1,6 @@
 require('dotenv').config();
 const axios = require("axios");
+const fetch = require('node-fetch');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 let apiKey;
 
@@ -41,6 +42,40 @@ async function menu(name, prefix) {
         `\t➥ ${prefix}disablensfw\n` +
         `\t➥ ${prefix}sc\n`;
     return text;
+}
+
+async function rinAi(msg) {
+    const apiUrl = 'https://api.apigratis.site/cai/send_message';
+    const requestData = {
+        external_id: process.env.CAI,
+        message: msg,
+        chat_id: "",
+        n_ressurect: false
+    };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+        const data = await response.json();
+
+        if (data.status) {
+            const repliesText = data.result.replies.map(reply => reply.text);
+
+            // console.log('Character Replies:', repliesText[0]);
+            // console.log('Chat ID:', data.result.chat_id);
+
+            return repliesText[0];
+        } else {
+            console.log('Error:', data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 async function wiki(argumen, region) {
@@ -195,4 +230,4 @@ async function handleAnimeRequest(query, argument) {
     }
 }
 
-module.exports = { wiki, weather, Gemini, randomWaifu, handleAnimeRequest, menu };
+module.exports = { wiki, weather, Gemini, randomWaifu, handleAnimeRequest, menu, rinAi };

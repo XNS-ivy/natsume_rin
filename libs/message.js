@@ -1,4 +1,4 @@
-const { wiki, weather, Gemini, randomWaifu, handleAnimeRequest, menu } = require("./external-func");
+const { wiki, weather, Gemini, randomWaifu, handleAnimeRequest, menu, rinAi } = require("./external-func");
 const { toggleNSFW, loadCore } = require("./utils");
 const { infoPlayer, registerToGuild, enterDungeon, checkBackpackItems } = require("./rin-rpg/rpg");
 
@@ -26,40 +26,53 @@ async function chatlog(chat, rinReply, m) {
         > Chat Type \t: ${chat.type}
         > Text \t\t: ${chat.text}\n`);
 
-    if (chat.text.startsWith(core.identity.prefix)) {
-        const prefix = chat.text.slice(core.identity.prefix.length).trim();
-        const [query, ...args] = prefix.split(/\s+/);
-        const argumen = args.join(" ");
-        try {
-            await global.rateLimiter.consume(m.key.remoteJid);
+    for (const prefix of core.identity.prefix) {
+        if (chat.text.startsWith(prefix)) {
+            const suffix = chat.text.slice(prefix.length).trim();
+            let query, argumen;
 
-            if (core.menu.includes(query) || core.rpg.includes(query)) {
-                await command(m, rinReply, query, argumen, chat.number, chat.name);
+            if (prefix === 'rin') {
+                query = "rin";
+                argumen = suffix;
             } else {
-                try {
-                    await global.rateLimiter.consume(`${m.key.remoteJid}-noCommand`);
-                    await replyText(m, rinReply, core.reply.noCommand);
-                } catch (rateLimitError) {
-                    console.error(`Rate limit exceeded for noCommand in group: ${m.key.remoteJid}`);
+                const [firstWord, ...args] = suffix.split(/\s+/);
+                query = firstWord;
+                argumen = args.join(" ");
+            }
+            try {
+                await global.rateLimiter.consume(m.key.remoteJid);
+
+                if (core.menu.includes(query) || core.rpg.includes(query)) {
+                    await command(m, rinReply, query, argumen, chat.number, chat.name);
+                } else {
                     try {
-                        await global.stopLimit.consume(m.key.remoteJid);
-                        await replyText(m, rinReply, core.reply.cooldown);
-                    } catch (stopLimitError) {
-                        await bans(m, rinReply, chat.number);
+                        await global.rateLimiter.consume(`${m.key.remoteJid}-noCommand`);
+                        await replyText(m, rinReply, core.reply.noCommand);
+                    } catch (rateLimitError) {
+                        console.error(`Rate limit exceeded for noCommand in group: ${m.key.remoteJid}`);
+                        try {
+                            await global.stopLimit.consume(m.key.remoteJid);
+                            await replyText(m, rinReply, core.reply.cooldown);
+                        } catch (stopLimitError) {
+                            await bans(m, rinReply, chat.number);
+                        }
                     }
                 }
+            } catch (rejRes) {
+                console.error(`Rate limit exceeded for group: ${m.key.remoteJid}`);
+                try {
+                    await global.stopLimit.consume(m.key.remoteJid);
+                    await replyText(m, rinReply, core.reply.cooldown);
+                } catch (stopLimitError) {
+                    await bans(m, rinReply, chat.number);
+                }
             }
-        } catch (rejRes) {
-            console.error(`Rate limit exceeded for group: ${m.key.remoteJid}`);
-            try {
-                await global.stopLimit.consume(m.key.remoteJid);
-                await replyText(m, rinReply, core.reply.cooldown);
-            } catch (stopLimitError) {
-                await bans(m, rinReply, chat.number);
-            }
+            return;
         }
     }
 }
+
+
 
 
 
@@ -179,6 +192,9 @@ async function command(m, rinReply, query, argumen, number, name) {
         case core.menu[17]:
         case core.menu[18]:
             text = await handleAnimeRequest(query, argumen);
+            break;
+        case core.menu[19]:
+            text = await rinAi(argumen)
             break;
         case core.rpg[0]:
             text = await infoPlayer(number);

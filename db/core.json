@@ -2,9 +2,10 @@
   "identity": {
     "name": "Natsume Rin",
     "version": "1.0",
-    "prefix": ".",
+    "prefix": [".","rin"],
     "greet": "Hi there, my name is Rin!"
   },
+  "rinAIChatId": "",
   "menu": [
     "help",
     "menu",
@@ -24,7 +25,8 @@
     "trending",
     "search",
     "seasonal",
-    "schedule"
+    "schedule",
+    "rin"
   ],
   "rpg": [
     "inforpg",

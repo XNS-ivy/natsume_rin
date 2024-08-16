@@ -1,4 +1,14 @@
 {
   "players": [
+    {
+      "id": "6283152066015",
+      "name": "Nayra",
+      "gold": 0,
+      "currentExp": 0,
+      "maxLevelUp": 200,
+      "level": 1,
+      "attack": 1,
+      "health": 10
+    }
   ]
 }
