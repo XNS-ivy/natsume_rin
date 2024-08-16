@@ -97,10 +97,14 @@ async function command(m, rinReply, query, argumen, number, name) {
     let media = false;
     switch (query) {
         case core.menu[1]:
-            text = await menu(name,core.identity.prefix);
+            text = await menu(name, core.identity.prefix);
             break;
         case core.menu[2]:
-            text = core.reply.sourceCode;
+            if (!core.admins.includes(number)) {
+                text = "You are not admin!"
+            } else {
+                text = core.reply.sourceCode;
+            }
             break;
         case core.menu[4]:
         case core.menu[5]:
@@ -170,11 +174,11 @@ async function command(m, rinReply, query, argumen, number, name) {
                 text = "Youre not admin!";
             }
             break;
-            case core.menu[15]:
-            case core.menu[16]:
-            case core.menu[17]:
-            case core.menu[18]:
-                text = await handleAnimeRequest(query, argumen);
+        case core.menu[15]:
+        case core.menu[16]:
+        case core.menu[17]:
+        case core.menu[18]:
+            text = await handleAnimeRequest(query, argumen);
             break;
         case core.rpg[0]:
             text = await infoPlayer(number);
@@ -186,16 +190,16 @@ async function command(m, rinReply, query, argumen, number, name) {
             }
             text = await registerToGuild(number, argumen);
             break;
-            case core.rpg[2]:
-                if(!argumen){
-                    text = `Please add floor you want to enter: .${core.rpg[2]} 1`;
-                    break;
-                }
-                text = await enterDungeon(number, argumen);
-            break;
-            case core.rpg[3]:
-                text = await checkBackpackItems(number);
+        case core.rpg[2]:
+            if (!argumen) {
+                text = `Please add floor you want to enter: .${core.rpg[2]} 1`;
                 break;
+            }
+            text = await enterDungeon(number, argumen);
+            break;
+        case core.rpg[3]:
+            text = await checkBackpackItems(number);
+            break;
         default:
             text = core.reply.noCommand;
             break;

@@ -38,7 +38,8 @@ async function menu(name, prefix) {
         `\t➥ ${prefix}unban [number/tag]\n` +
         `\t➥ ${prefix}shutdown\n` +
         `\t➥ ${prefix}enablensfw\n` +
-        `\t➥ ${prefix}disablensfw\n`;
+        `\t➥ ${prefix}disablensfw\n` +
+        `\t➥ ${prefix}sc\n`;
     return text;
 }
 
