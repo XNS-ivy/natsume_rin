@@ -2,7 +2,10 @@
   "identity": {
     "name": "Natsume Rin",
     "version": "1.0",
-    "prefix": [".","rin"],
+    "prefix": [
+      ".",
+      "rin"
+    ],
     "greet": "Hi there, my name is Rin!",
     "cai": "3P-9ZapK_ixbuGqQCLrspoMZidRUNRGGToltI2PpeD4"
   },
@@ -57,10 +60,7 @@
     "cooldown": "Cooldown request 1 minute!",
     "ban": "Your are cancelled and dunked by Rin!"
   },
-  "bans": [
-  ],
-  "admins": [
-  ],
-  "premium": [
-  ]
+  "bans": [],
+  "admins": [],
+  "premium": []
 }

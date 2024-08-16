@@ -25,9 +25,10 @@ async function chatlog(chat, rinReply, m) {
         > On Group \t: ${chat.group}
         > Chat Type \t: ${chat.type}
         > Text \t\t: ${chat.text}\n`);
-
+    const text = chat.text.toLowerCase();
+ 
     for (const prefix of core.identity.prefix) {
-        if (chat.text.startsWith(prefix)) {
+        if (text.startsWith(prefix)) {
             const suffix = chat.text.slice(prefix.length).trim();
             let query, argumen;
 
