@@ -2,6 +2,7 @@ require('dotenv').config();
 const axios = require("axios");
 const fetch = require('node-fetch');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { loadCore } = require('./utils');
 let apiKey;
 
 async function menu(name, prefix) {
@@ -10,46 +11,62 @@ async function menu(name, prefix) {
         `I hope you not spamming.\n\n` +
         `*--- Regular Member Menu ---*\n\n` +
         `➤ Wikipedia Menu.\n` +
-        `\t➥ ${prefix}wikiid [search-indonesian-wiki]\n` +
-        `\t➥ ${prefix}wikien [search-global-wiki]\n\n` +
+        `\t➥ ${prefix[0]}wikiid [search-indonesian-wiki]\n` +
+        `\t➥ ${prefix[0]}wikien [search-global-wiki]\n\n` +
         `➤ Gemini Menu.\n` +
-        `\t➥ ${prefix}gemini [type-anything]\n\n` +
+        `\t➥ ${prefix[0]}gemini [type-anything]\n\n` +
         `➤ Wheater Condition Menu.\n` +
-        `\t➥ ${prefix}weather [your-city-location]\n\n` +
+        `\t➥ ${prefix[0]}weather [your-city-location]\n\n` +
         `➤ Random Waifu Image.\n` +
-        `\t➥ ${prefix}waifusfw [category]\n` +
-        `\t➥ ${prefix}waifusfw [category]\n` +
+        `\t➥ ${prefix[0]}waifusfw [category]\n` +
+        `\t➥ ${prefix[0]}waifusfw [category]\n` +
         `\t\t ➣ Category:\n\t\t\t ┣ [waifu,neko,shinobu,megumin]\n` +
         `\t\t\t ┗ [waifu,neko,trap,blowjob]\n\n` +
         `➤ MyAnimeList Menu.\n` +
-        `\t➥ ${prefix}trending\n` +
-        `\t➥ ${prefix}search [anime-name]\n` +
-        `\t➥ ${prefix}seasonal\n` +
-        `\t➥ ${prefix}schedule\n\n` +
+        `\t➥ ${prefix[0]}trending\n` +
+        `\t➥ ${prefix[0]}search [anime-name]\n` +
+        `\t➥ ${prefix[0]}seasonal\n` +
+        `\t➥ ${prefix[0]}schedule\n\n` +
         `➤ Role Play Games.\n` +
-        `\t➥ ${prefix}register [name]\n` +
-        `\t➥ ${prefix}inforpg\n` +
-        `\t➥ ${prefix}backpack\n` +
-        `\t➥ ${prefix}dungeon [floor]\n\n` +
+        `\t➥ ${prefix[0]}register [name]\n` +
+        `\t➥ ${prefix[0]}inforpg\n` +
+        `\t➥ ${prefix[0]}backpack\n` +
+        `\t➥ ${prefix[0]}dungeon [floor]\n\n` +
         // end of regular member command
         `*--- Premium Member Menu ---*\n\n` +
         // end of premium member
         `*--- Admin Tools ---*\n\n` +
-        `\t➥ ${prefix}ban [number/tag]\n` +
-        `\t➥ ${prefix}unban [number/tag]\n` +
-        `\t➥ ${prefix}shutdown\n` +
-        `\t➥ ${prefix}enablensfw\n` +
-        `\t➥ ${prefix}disablensfw\n` +
-        `\t➥ ${prefix}sc\n`;
+        `\t➥ ${prefix[0]}ban [number/tag]\n` +
+        `\t➥ ${prefix[0]}unban [number/tag]\n` +
+        `\t➥ ${prefix[0]}shutdown\n` +
+        `\t➥ ${prefix[0]}enablensfw\n` +
+        `\t➥ ${prefix[0]}disablensfw\n` +
+        `\t➥ ${prefix[0]}sc\n`;
     return text;
 }
 
 async function rinAi(msg) {
+    if (msg === "hello" || msg == "hello how are you?" || msg == "hi") {
+        if (global.core.identity && global.core.identity.chat_id) {
+            global.core.identity.chat_id = "";
+
+            try {
+                await global.fs.writeFile(global.corePath, JSON.stringify(global.core, null, 2), 'utf8');
+                console.log('chat_id reset...');
+                await loadCore();
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        } else {
+            console.log('chat_id not found in global.core.');
+        }
+    }
+
     const apiUrl = 'https://api.apigratis.site/cai/send_message';
     const requestData = {
-        external_id: core.identity.cai,
+        external_id: global.core.identity.cai,
         message: msg,
-        chat_id: "",
+        chat_id: global.core.identity.chat_id,
         n_ressurect: false
     };
 
@@ -66,9 +83,14 @@ async function rinAi(msg) {
         if (data.status) {
             const repliesText = data.result.replies.map(reply => reply.text);
 
-            // console.log('Character Replies:', repliesText[0]);
-            // console.log('Chat ID:', data.result.chat_id);
+            if (global.core.identity.chat_id === "") {
+                global.core.identity.chat_id = data.result.chat_id;
 
+                await global.fs.writeFile(global.corePath, JSON.stringify(global.core, null, 2), 'utf8');
+                console.log('chat_id updated and saved.');
+                await loadCore();
+            }
+            
             return repliesText[0];
         } else {
             console.log('Error:', data.message);
