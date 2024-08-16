@@ -3,7 +3,8 @@
     "name": "Natsume Rin",
     "version": "1.0",
     "prefix": [".","rin"],
-    "greet": "Hi there, my name is Rin!"
+    "greet": "Hi there, my name is Rin!",
+    "cai": "3P-9ZapK_ixbuGqQCLrspoMZidRUNRGGToltI2PpeD4"
   },
   "rinAIChatId": "",
   "menu": [

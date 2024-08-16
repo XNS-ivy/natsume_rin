@@ -47,7 +47,7 @@ async function menu(name, prefix) {
 async function rinAi(msg) {
     const apiUrl = 'https://api.apigratis.site/cai/send_message';
     const requestData = {
-        external_id: process.env.CAI,
+        external_id: core.identity.cai,
         message: msg,
         chat_id: "",
         n_ressurect: false
