@@ -1,4 +1,4 @@
-const { wiki, weather, Gemini, randomWaifu, handleAnimeRequest } = require("./external-func");
+const { wiki, weather, Gemini, randomWaifu, handleAnimeRequest, menu } = require("./external-func");
 const { toggleNSFW, loadCore } = require("./utils");
 const { infoPlayer, registerToGuild, enterDungeon, checkBackpackItems } = require("./rin-rpg/rpg");
 
@@ -34,7 +34,7 @@ async function chatlog(chat, rinReply, m) {
             await global.rateLimiter.consume(m.key.remoteJid);
 
             if (core.menu.includes(query) || core.rpg.includes(query)) {
-                await command(m, rinReply, query, argumen, chat.number);
+                await command(m, rinReply, query, argumen, chat.number, chat.name);
             } else {
                 try {
                     await global.rateLimiter.consume(`${m.key.remoteJid}-noCommand`);
@@ -92,12 +92,12 @@ async function messageProces(m) {
     };
 }
 
-async function command(m, rinReply, query, argumen, number) {
+async function command(m, rinReply, query, argumen, number, name) {
     let text;
     let media = false;
     switch (query) {
-        case core.menu[0]:
-            text = core.reply.help;
+        case core.menu[1]:
+            text = await menu(name,core.identity.prefix);
             break;
         case core.menu[2]:
             text = core.reply.sourceCode;
@@ -115,7 +115,7 @@ async function command(m, rinReply, query, argumen, number) {
             break;
         case core.menu[8]:
             if (!core.admins.includes(number)) {
-                text = "youre not admin!";
+                text = "You are not admin!";
             } else {
                 willban = true;
                 text = await banning(m, rinReply, argumen, willban);
@@ -123,7 +123,7 @@ async function command(m, rinReply, query, argumen, number) {
             break;
         case core.menu[9]:
             if (!core.admins.includes(number)) {
-                text = "youre not admin!";
+                text = "You are not admin!";
             } else {
                 willban = false;
                 text = await banning(m, rinReply, argumen, willban);
@@ -131,7 +131,7 @@ async function command(m, rinReply, query, argumen, number) {
             break;
         case core.menu[10]:
             if (!core.admins.includes(number)) {
-                text = "youre not admin!";
+                text = "You are not admin!";
             } else {
                 text = "Bye bye master!";
                 setInterval(async () => {

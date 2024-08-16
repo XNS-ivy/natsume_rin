@@ -3,6 +3,45 @@ const axios = require("axios");
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 let apiKey;
 
+async function menu(name, prefix) {
+    const text = `Hi ${name}, i saw you want use me.\n` +
+        `Here i give you command list.\n` +
+        `I hope you not spamming.\n\n` +
+        `*--- Regular Member Menu ---*\n\n` +
+        `➤ Wikipedia Menu.\n` +
+        `\t➥ ${prefix}wikiid [search-indonesian-wiki]\n` +
+        `\t➥ ${prefix}wikien [search-global-wiki]\n\n` +
+        `➤ Gemini Menu.\n` +
+        `\t➥ ${prefix}gemini [type-anything]\n\n` +
+        `➤ Wheater Condition Menu.\n` +
+        `\t➥ ${prefix}wheater [your-city-location]\n\n` +
+        `➤ Random Waifu Image.\n` +
+        `\t➥ ${prefix}waifusfw [category]\n` +
+        `\t➥ ${prefix}waifusfw [category]\n` +
+        `\t\t ➣ Category:\n\t\t\t ┣ [waifu,neko,shinobu,megumin]\n` +
+        `\t\t\t ┗ [waifu,neko,trap,blowjob]\n\n` +
+        `➤ MyAnimeList Menu.\n` +
+        `\t➥ ${prefix}trending\n` +
+        `\t➥ ${prefix}search [anime-name]\n` +
+        `\t➥ ${prefix}seasonal\n` +
+        `\t➥ ${prefix}schedule\n\n` +
+        `➤ Role Play Games.\n` +
+        `\t➥ ${prefix}register [name]\n` +
+        `\t➥ ${prefix}inforpg\n` +
+        `\t➥ ${prefix}backpack\n` +
+        `\t➥ ${prefix}dungeon [floor]\n\n` +
+        // end of regular member command
+        `*--- Premium Member Menu ---*\n\n` +
+        // end of premium member
+        `*--- Admin Tools ---*\n\n` +
+        `\t➥ ${prefix}ban [number/tag]\n` +
+        `\t➥ ${prefix}unban [number/tag]\n` +
+        `\t➥ ${prefix}shutdown\n` +
+        `\t➥ ${prefix}enablensfw\n` +
+        `\t➥ ${prefix}disablensfw\n`;
+    return text;
+}
+
 async function wiki(argumen, region) {
     if (!argumen) return `Please add argument after query Ex: ".wikien anime"`;
     try {
@@ -155,4 +194,4 @@ async function handleAnimeRequest(query, argument) {
     }
 }
 
-module.exports = { wiki, weather, Gemini, randomWaifu, handleAnimeRequest };
+module.exports = { wiki, weather, Gemini, randomWaifu, handleAnimeRequest, menu };
