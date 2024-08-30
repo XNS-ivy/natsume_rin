@@ -15,7 +15,7 @@ async function menu(name, prefix) {
         `\t➥ ${prefix[0]}wikien [search-global-wiki]\n\n` +
         `➤ Gemini Menu.\n` +
         `\t➥ ${prefix[0]}gemini [type-anything]\n\n` +
-        `➤ Wheater Condition Menu.\n` +
+        `➤ Weather Condition Menu.\n` +
         `\t➥ ${prefix[0]}weather [your-city-location]\n\n` +
         `➤ Random Waifu Image.\n` +
         `\t➥ ${prefix[0]}waifusfw [category]\n` +
