@@ -89,7 +89,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/XNS-ivy/natsume-rin"
+    "url": "https://github.com/XNS-ivy/natsume-rin"
   },
   "author": "XNS-ivy",
   "license": "MIT"
