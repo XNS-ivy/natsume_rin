@@ -82,7 +82,7 @@ async function rinAi(msg) {
 
         if (data.status) {
             const repliesText = data.result.replies.map(reply => reply.text);
-
+            const reply = repliesText[0];
             if (global.core.identity.chat_id === "") {
                 global.core.identity.chat_id = data.result.chat_id;
 
@@ -91,7 +91,7 @@ async function rinAi(msg) {
                 await loadCore();
             }
             
-            return repliesText[0];
+            return reply;
         } else {
             console.log('Error:', data.message);
         }
