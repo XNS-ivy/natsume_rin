@@ -60,6 +60,7 @@
     "cooldown": "Cooldown request 1 minute!",
     "ban": "Your are cancelled and dunked by Rin!"
   },
+  "owner": [],
   "bans": [],
   "admins": [],
   "premium": []
