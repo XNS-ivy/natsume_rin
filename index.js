@@ -1,7 +1,11 @@
-const { default: rin_sock, useMultiFileAuthState, BufferJSON } = require("@whiskeysockets/baileys");
+const {
+    default: rin_sock,
+    useMultiFileAuthState,
+    DisconnectReason,
+} = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const { RateLimiterMemory } = require('rate-limiter-flexible');
-
+const {Boom} = require("@hapi/boom");
 const { msg } = require("./libs/message.js");
 const { loadCore } = require("./libs/utils.js");
 global.fs = require("fs").promises;
@@ -15,7 +19,9 @@ global.stopLimit = new RateLimiterMemory({
     points: 1,
     duration: 120,
 });
+
 async function sock() {
+    loadCore();
     const { state, saveCreds } = await useMultiFileAuthState("session");
     const rin = rin_sock({
         printQRInTerminal: true,
@@ -30,18 +36,18 @@ async function sock() {
         markOnlineOnConnect: true,
     });
     rin.ev.on("creds.update", saveCreds);
-    rin.ev.on("connection.update", async ({ connection }) => {
-        if (connection === "open") {
-            console.log("opened connection");
-        } else if (connection === "close") {
-            console.log("Reconnect....");
-            try {
-                await sock();
-            } catch (err) {
-                console.error(err);
+    rin.ev.on('connection.update', (update) => {
+        const { connection, lastDisconnect } = update
+        if(connection === 'close') {
+            const shouldReconnect = (lastDisconnect.error = Boom)?.output?.statusCode !== DisconnectReason.loggedOut
+            console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect)
+            if(shouldReconnect) {
+                sock();
             }
+        } else if(connection === 'open') {
+            console.log('opened connection')
         }
-    });
+    })
     rin.ev.on("messages.upsert", async (m) => {
         if (!m.messages) return;
         const bodyMessage = m.messages[0];
@@ -52,5 +58,4 @@ async function sock() {
         }
     });
 }
-loadCore();
 sock();

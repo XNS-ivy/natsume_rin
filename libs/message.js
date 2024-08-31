@@ -26,7 +26,7 @@ async function chatlog(chat, rinReply, m) {
         > Chat Type \t: ${chat.type}
         > Text \t\t: ${chat.text}\n`);
     const text = chat.text.toLowerCase();
- 
+
     for (const prefix of core.identity.prefix) {
         if (text.startsWith(prefix)) {
             const suffix = chat.text.slice(prefix.length).trim();
@@ -225,6 +225,8 @@ async function command(m, rinReply, query, argumen, number, name) {
         replyText(m, rinReply, text);
     } else if (text && media) {
         replyImage(m, rinReply, text, media);
+    }else {
+        sendButton(m,rinReply);
     }
 }
 // util function ---
@@ -296,5 +298,18 @@ async function replyImage(m, rinReply, text, url) {
         image: { url: url },
         caption: text
     }, { quoted: m, ephemeralExpiration: WA_DEFAULT_EPHEMERAL });
+}
+async function sendButton(m, rinReply) {
+    const id = m.key.remoteJid;
+    const buttonMessage = {
+        text: "Halo, silahkan pilih salah satu opsi:",
+        footer: "Bot © 2024",
+        buttons: [
+            { buttonId: 'option1', buttonText: { displayText: 'Pilihan 1' }, type: 1 },
+            { buttonId: 'option2', buttonText: { displayText: 'Pilihan 2' }, type: 1 }
+        ],
+        headerType: 1
+    };
+    await rinReply.sendMessage(id,buttonMessage)
 }
 module.exports = { msg };
