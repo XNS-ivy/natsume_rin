@@ -111,7 +111,6 @@ async function command(m, rinReply, query, argumen, number, name) {
     let media = false;
     switch (query) {
         case core.menu[1]:
-            text = await menu(name, core.identity.prefix);
             break;
         case core.menu[2]:
             if (!core.admins.includes(number)) {
@@ -226,7 +225,7 @@ async function command(m, rinReply, query, argumen, number, name) {
     } else if (text && media) {
         replyImage(m, rinReply, text, media);
     }else {
-        sendButton(m,rinReply);
+        replyMenu(m,rinReply,name);
     }
 }
 // util function ---
@@ -298,5 +297,23 @@ async function replyImage(m, rinReply, text, url) {
         image: { url: url },
         caption: text
     }, { quoted: m, ephemeralExpiration: WA_DEFAULT_EPHEMERAL });
+}
+async function replyMenu(m,rinReply, name) {
+    const id = m.key.remoteJid;
+    const text = await menu(name, core.identity.prefix);
+    const content = {
+        text: text,
+        contextInfo: {
+            externalAdReply: {
+                title: "Menu of Command",
+                body: 'XNS-ivy bot`s',
+                thumbnailUrl: core.identity.profilePict,
+                sourceUrl: "https://chat.whatsapp.com/",
+                mediaType: 1,
+                renderLargerThumbnail: true
+            }
+        }
+    };
+    await rinReply.sendMessage(id, content, { quoted: m,ephemeralExpiration: WA_DEFAULT_EPHEMERAL });
 }
 module.exports = { msg };
