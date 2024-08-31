@@ -37,17 +37,17 @@ async function sock() {
     });
     rin.ev.on("creds.update", saveCreds);
     rin.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect } = update
+        const { connection, lastDisconnect } = update;
         if(connection === 'close') {
-            const shouldReconnect = (lastDisconnect.error = Boom)?.output?.statusCode !== DisconnectReason.loggedOut
-            console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect)
+            const shouldReconnect = (lastDisconnect.error = Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
+            console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
             if(shouldReconnect) {
                 sock();
             }
         } else if(connection === 'open') {
-            console.log('opened connection')
+            console.log('opened connection');
         }
-    })
+    });
     rin.ev.on("messages.upsert", async (m) => {
         if (!m.messages) return;
         const bodyMessage = m.messages[0];
