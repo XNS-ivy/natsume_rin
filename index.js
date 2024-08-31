@@ -1,24 +1,13 @@
+require("./global-var.js");
 const {
     default: rin_sock,
     useMultiFileAuthState,
     DisconnectReason,
 } = require("@whiskeysockets/baileys");
 const pino = require("pino");
-const { RateLimiterMemory } = require('rate-limiter-flexible');
 const {Boom} = require("@hapi/boom");
 const { msg } = require("./libs/message.js");
 const { loadCore } = require("./libs/utils.js");
-global.fs = require("fs").promises;
-global.core = {};
-global.corePath = "./db/core.json";
-global.rateLimiter = new RateLimiterMemory({
-    points: 2,
-    duration: 120,
-});
-global.stopLimit = new RateLimiterMemory({
-    points: 1,
-    duration: 120,
-});
 
 async function sock() {
     loadCore();
@@ -58,4 +47,6 @@ async function sock() {
         }
     });
 }
-sock();
+sock().catch((err)=>{
+    console.log("Failed to initialize socket: ",err)
+});
