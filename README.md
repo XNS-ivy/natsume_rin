@@ -17,9 +17,11 @@
 
 > [OpenWeather API](https://openweathermap.org/api)
 
-# Example with Color (if HTML is supported)
+## Create .env file and paste this:
+```bash
+# Gemini API KEY
+GEMINI_API=YOUR_APKIKEY
 
-<pre>
-<span style="color: red;">GEMINI_API=YOUR_APIKEY</span>
-<span style="color: green;">WEATHER=YOUR_APIKEY</span>
-</pre>
+# Open Weather API
+WEATHER=YOUR_APIKEY
+```
