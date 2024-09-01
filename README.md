@@ -17,7 +17,9 @@
 
 > [OpenWeather API](https://openweathermap.org/api)
 
-```
-GEMINI_API=YOUR_APKIKEY
-WEATHER=YOUR_APIKEY
-```
+# Example with Color (if HTML is supported)
+
+<pre>
+<span style="color: red;">GEMINI_API=YOUR_APIKEY</span>
+<span style="color: green;">WEATHER=YOUR_APIKEY</span>
+</pre>
