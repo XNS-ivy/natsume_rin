@@ -7,7 +7,7 @@ const {
 const pino = require("pino");
 const { Boom } = require("@hapi/boom");
 const { msg } = require("./libs/message.js");
-const { loadCore } = require("./libs/utils.js");
+const { loadCore,setOwner } = require("./libs/utils.js");
 
 async function sock() {
     loadCore();
@@ -26,17 +26,28 @@ async function sock() {
     };
 
     const rin = rin_sock(sockConfig);
-    rin.ev.on("creds.update", saveCreds);
-    rin.ev.on('connection.update', (update) => {
+    rin.ev.on("creds.update", await saveCreds);
+    rin.ev.on('connection.update',async (update) => {
         const { connection, lastDisconnect } = update;
         if (connection === 'close') {
             const shouldReconnect = (lastDisconnect.error = Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
             console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
             if (shouldReconnect) {
-                sock();
+                await sock();
             }
         } else if (connection === 'open') {
-            console.log('opened connection');
+            const number = rin.user.id.split(":")[0];
+            const connect = `Connection is open\n`+
+            `Number: ${number}\n`+
+            `Name: ${rin.user.name}\n\n`;
+            console.log(connect);
+            try {
+                console.log("Adding owner number");
+                await setOwner(number);
+                console.log(global.owner_number);
+            } catch (error) {
+                console.error("error adding owner number: ",error);
+            }
         }
     });
     rin.ev.on("messages.upsert", async (m) => {

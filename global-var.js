@@ -10,3 +10,6 @@ global.stopLimit = new RateLimiterMemory({
     points: 1,
     duration: 120,
 });
+global.owner = (number) => {
+    global.owner_number = number;
+};

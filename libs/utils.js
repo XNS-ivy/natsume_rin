@@ -7,7 +7,9 @@ async function loadCore() {
         console.error('Error reading core.json:', err);
     }
 }
-
+async function setOwner(number) {
+    global.owner(number);
+}
 async function toggleNSFW(enable) {
     try {
         const data = await fs.readFile(corePath, 'utf8');
@@ -35,5 +37,5 @@ async function toggleNSFW(enable) {
 }
 
 module.exports = {
-    toggleNSFW, loadCore
+    toggleNSFW, loadCore, setOwner
 }

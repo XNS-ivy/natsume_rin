@@ -26,7 +26,8 @@ async function menu(name, prefix) {
         `\t➥ ${prefix[0]}trending\n` +
         `\t➥ ${prefix[0]}search [anime-name]\n` +
         `\t➥ ${prefix[0]}seasonal\n` +
-        `\t➥ ${prefix[0]}schedule\n\n` +
+        `\t➥ ${prefix[0]}schedule\n` +
+        `\t➥ ${prefix[0]}latest\n\n` +
         `➤ Role Play Games.\n` +
         `\t➥ ${prefix[0]}register [name]\n` +
         `\t➥ ${prefix[0]}inforpg\n` +
@@ -34,6 +35,8 @@ async function menu(name, prefix) {
         `\t➥ ${prefix[0]}dungeon [floor]\n\n` +
         // end of regular member command
         `*--- Premium Member Menu ---*\n\n` +
+        `➤ Dating with Rin.\n` +
+        `\t➥ ${prefix[1]} [Ask everything!]\n\n` +
         // end of premium member
         `*--- Admin Tools ---*\n\n` +
         `\t➥ ${prefix[0]}ban [number/tag]\n` +

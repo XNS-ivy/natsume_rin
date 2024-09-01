@@ -147,7 +147,7 @@ async function command(m, rinReply, query, argumen, number, name) {
             }
             break;
         case core.menu[10]:
-            if (!core.admins.includes(number)) {
+            if (!core.admins.includes(number) || !global.owner_number.includes(number)) {
                 text = "You are not admin!";
             } else {
                 text = "Bye bye master!";
@@ -180,7 +180,7 @@ async function command(m, rinReply, query, argumen, number, name) {
             break;
         case core.menu[13]:
         case core.menu[14]:
-            if (core.admins.includes(number)) {
+            if (core.admins.includes(number)|| global.owner_number.includes(number)) {
                 const enable = query === core.menu[13];
                 text = await toggleNSFW(enable);
             } else {
@@ -195,7 +195,11 @@ async function command(m, rinReply, query, argumen, number, name) {
             text = await handleAnimeRequest(query, argumen);
             break;
         case core.menu[20]:
-            text = await rinAi(argumen)
+            if (core.admins.includes(number) || global.owner_number.includes(number) || core.premium.includes(number)){
+                text = await rinAi(argumen);
+            }else{
+                text = "Youre not Premium members!";
+            }
             break;
         case core.rpg[0]:
             text = await infoPlayer(number);
