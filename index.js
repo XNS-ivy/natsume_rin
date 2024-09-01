@@ -42,11 +42,10 @@ async function sock() {
             `Name: ${rin.user.name}\n\n`;
             console.log(connect);
             try {
-                console.log("Adding owner number");
+                console.log("Adding owner number...");
                 await setOwner(number);
-                console.log(global.owner_number);
             } catch (error) {
-                console.error("error adding owner number: ",error);
+                console.error("Error adding owner number: ",error);
             }
         }
     });
