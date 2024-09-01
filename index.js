@@ -12,7 +12,7 @@ const { loadCore } = require("./libs/utils.js");
 async function sock() {
     loadCore();
     const { state, saveCreds } = await useMultiFileAuthState("session");
-    const rin = rin_sock({
+    const sockConfig = {
         printQRInTerminal: true,
         browser: ["Natsume_Rin", "Chrome", "1.0.0"],
         auth: state,
@@ -23,7 +23,9 @@ async function sock() {
         emitOwnEvents: false,
         shouldSyncHistoryMessage: true,
         markOnlineOnConnect: true,
-    });
+    };
+
+    const rin = rin_sock(sockConfig);
     rin.ev.on("creds.update", saveCreds);
     rin.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update;
@@ -48,5 +50,5 @@ async function sock() {
     });
 }
 sock().catch((err)=>{
-    console.log("Failed to initialize socket: ",err)
+    console.log("Failed to initialize socket: ",err);
 });

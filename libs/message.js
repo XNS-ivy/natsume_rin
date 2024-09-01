@@ -305,12 +305,12 @@ async function replyMenu(m,rinReply, name) {
         text: text,
         contextInfo: {
             externalAdReply: {
-                title: "Menu of Command",
+                title: "Menu command",
                 body: 'XNS-ivy bot`s',
                 thumbnailUrl: core.identity.profilePict,
-                sourceUrl: "https://chat.whatsapp.com/",
+                sourceUrl: "",
                 mediaType: 1,
-                renderLargerThumbnail: true
+                renderLargerThumbnail: true,
             }
         }
     };

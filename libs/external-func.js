@@ -6,8 +6,8 @@ const { loadCore } = require('./utils');
 let apiKey;
 
 async function menu(name, prefix) {
-    const text = `Hi ${name}, i saw you want use me.\n` +
-        `Here i give you command list.\n` +
+    const text = `Hi ${name}, i saw you want use my feature.\n` +
+        `Here i give you feature list.\n` +
         `I hope you not spamming.\n\n` +
         `*--- Regular Member Menu ---*\n\n` +
         `➤ Wikipedia Menu.\n` +

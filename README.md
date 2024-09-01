@@ -17,3 +17,7 @@
 
 > [OpenWeather API](https://openweathermap.org/api)
 
+```bash
+GEMINI_API=YOUR_APKIKEY
+WEATHER=YOUR_APIKEY
+```
