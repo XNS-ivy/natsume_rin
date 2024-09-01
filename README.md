@@ -9,15 +9,15 @@
 # Installation
 
 ## Requirement
-- nodejs
-- cmd / powershell
+1. **Node.js** - Make sure you have Node.js installed.
+2. **Terminal** - You can use powershell or cmd or termux on android
 
 ## Get your API
 > [Gemini API](https://ai.google.dev/gemini-api)
 
 > [OpenWeather API](https://openweathermap.org/api)
 
-```bash
+```
 GEMINI_API=YOUR_APKIKEY
 WEATHER=YOUR_APIKEY
 ```
