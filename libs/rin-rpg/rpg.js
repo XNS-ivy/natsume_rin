@@ -54,7 +54,6 @@ function checkBackpackItems(playerId) {
     return "Backpack is empty.";
   }
 
-  // Format the output
   let result = "Items in your backpack:\n";
   for (const [itemName, quantity] of Object.entries(items)) {
     result += `- ${itemName}: ${quantity}\n`;
@@ -92,7 +91,6 @@ function addOrUpdateBackpack(id, newItems) {
         // If item already exists, increment its quantity
         backpack.items[itemName] += newItems[itemName];
       } else {
-        // If item doesn't exist, add it to the backpack
         backpack.items[itemName] = newItems[itemName];
       }
     });
@@ -107,7 +105,6 @@ function addOrUpdateBackpack(id, newItems) {
 
   writeFileSync(backpackPath, JSON.stringify(data, null, 2), "utf-8");
 }
-
 
 // Register new player and initialize their backpack
 function registerToGuild(id, name) {
@@ -135,8 +132,8 @@ function registerToGuild(id, name) {
 
   return "Successfully registered to guild!\n\n" + infoPlayer(id);
 }
-// entering dungeon function
 
+// entering dungeon function
 function enterDungeon(id, floor) {
   initializeFiles();
   const player = findPlayerById(id)
@@ -146,22 +143,21 @@ function enterDungeon(id, floor) {
   const battleResult = dungeonBattle(id, enemy);
   return battleResult;
 }
+
 // get random enemy by floor
 function getRandomEnemy(floor) {
   const enemies = entityData.entity.filter(enemy =>
     floor >= enemy.startFloor && floor <= enemy.maxFloor
   );
 
-  if (enemies.length === 0) return null;  // If no enemies match the floor, return null
+  if (enemies.length === 0) return null;
 
   const randomIndex = Math.floor(Math.random() * enemies.length);
-  const selectedEnemy = { ...enemies[randomIndex] }; // Clone the enemy object to avoid mutating the original
+  const selectedEnemy = { ...enemies[randomIndex] };
 
-  // Calculate the number of floors above startFloor
   const floorDifference = floor - selectedEnemy.startFloor;
 
   if (floorDifference > 0) {
-    // Apply buff based on how many floors above startFloor the player is
     const floorMultiplier = Math.pow(2.5, floorDifference);
     selectedEnemy.health *= floorMultiplier;
     selectedEnemy.attack *= floorMultiplier;
@@ -189,7 +185,7 @@ function dungeonBattle(id, enemy) {
   if (playerHealth > 0) {
     let expGained = enemy.expDrop;
     const item = Object.values(itemData).find(item => item.itemId === enemy.itemId);
-    const itemReward = { [item.name]: 1 }; // Reward player with item
+    const itemReward = { [item.name]: 1 };
 
     player.currentExp += expGained;
     if (player.currentExp >= player.maxLevelUp) {

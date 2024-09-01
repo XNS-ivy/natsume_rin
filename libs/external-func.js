@@ -90,7 +90,7 @@ async function rinAi(msg) {
                 console.log('chat_id updated and saved.');
                 await loadCore();
             }
-            
+
             return reply;
         } else {
             console.log('Error:', data.message);
@@ -224,7 +224,7 @@ async function handleAnimeRequest(query, argument) {
                 });
                 result = `Search Results for "${argument}":\n`;
                 response.data.data.forEach((anime, index) => {
-                    result += `${index + 1}. ${anime.title} - Score: ${anime.score}\n`;
+                    result += `${index + 1}. ${anime.title}\n- Score: ${anime.score}\n\n`;
                 });
                 return result;
 
@@ -232,7 +232,7 @@ async function handleAnimeRequest(query, argument) {
                 response = await axios.get('https://api.jikan.moe/v4/seasons/now');
                 result = 'Seasonal Anime:\n';
                 response.data.data.forEach((anime, index) => {
-                    result += `${index + 1}. ${anime.title} - Score: ${anime.score}\n`;
+                    result += `${index + 1}. ${anime.title}\n- Score: ${anime.score}\n\n`;
                 });
                 return result;
 
@@ -240,12 +240,20 @@ async function handleAnimeRequest(query, argument) {
                 response = await axios.get('https://api.jikan.moe/v4/schedules');
                 result = 'Anime Release Schedule:\n';
                 response.data.data.forEach((anime, index) => {
-                    result += `${index + 1}. ${anime.title} - Aired: ${anime.aired.string}\n`;
+                    result += `${index + 1}. ${anime.title}\n- Aired: ${anime.aired.string}\n\n`;
+                });
+                return result;
+
+            case 'latest':
+                response = await axios.get('https://api.apigratis.site/anime/latest?page=20');
+                result = 'Latest Anime Update:\n';
+                response.data.result.results.forEach((anime, index) => {
+                    result += `${index + 1}. ${anime.title}\n- Episode: ${anime.episode}\n\n`;
                 });
                 return result;
 
             default:
-                return 'Invalid query type! Please use "trending", "search", "seasonal", or "schedule".';
+                return 'Invalid query type! Please use "trending", "search", "seasonal", "schedule", or "latest".';
         }
     } catch (error) {
         return `Error handling anime request: ${error.message}`;

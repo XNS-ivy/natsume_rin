@@ -191,9 +191,10 @@ async function command(m, rinReply, query, argumen, number, name) {
         case core.menu[16]:
         case core.menu[17]:
         case core.menu[18]:
+        case core.menu[19]:
             text = await handleAnimeRequest(query, argumen);
             break;
-        case core.menu[19]:
+        case core.menu[20]:
             text = await rinAi(argumen)
             break;
         case core.rpg[0]:
@@ -224,8 +225,8 @@ async function command(m, rinReply, query, argumen, number, name) {
         replyText(m, rinReply, text);
     } else if (text && media) {
         replyImage(m, rinReply, text, media);
-    }else {
-        replyMenu(m,rinReply,name);
+    } else {
+        replyMenu(m, rinReply, name);
     }
 }
 // util function ---
@@ -298,7 +299,7 @@ async function replyImage(m, rinReply, text, url) {
         caption: text
     }, { quoted: m, ephemeralExpiration: WA_DEFAULT_EPHEMERAL });
 }
-async function replyMenu(m,rinReply, name) {
+async function replyMenu(m, rinReply, name) {
     const id = m.key.remoteJid;
     const text = await menu(name, core.identity.prefix);
     const content = {
@@ -314,6 +315,6 @@ async function replyMenu(m,rinReply, name) {
             }
         }
     };
-    await rinReply.sendMessage(id, content, { quoted: m,ephemeralExpiration: WA_DEFAULT_EPHEMERAL });
+    await rinReply.sendMessage(id, content, { quoted: m, ephemeralExpiration: WA_DEFAULT_EPHEMERAL });
 }
 module.exports = { msg };

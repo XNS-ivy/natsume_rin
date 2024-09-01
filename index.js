@@ -5,7 +5,7 @@ const {
     DisconnectReason,
 } = require("@whiskeysockets/baileys");
 const pino = require("pino");
-const {Boom} = require("@hapi/boom");
+const { Boom } = require("@hapi/boom");
 const { msg } = require("./libs/message.js");
 const { loadCore } = require("./libs/utils.js");
 
@@ -29,13 +29,13 @@ async function sock() {
     rin.ev.on("creds.update", saveCreds);
     rin.ev.on('connection.update', (update) => {
         const { connection, lastDisconnect } = update;
-        if(connection === 'close') {
+        if (connection === 'close') {
             const shouldReconnect = (lastDisconnect.error = Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
             console.log('connection closed due to ', lastDisconnect.error, ', reconnecting ', shouldReconnect);
-            if(shouldReconnect) {
+            if (shouldReconnect) {
                 sock();
             }
-        } else if(connection === 'open') {
+        } else if (connection === 'open') {
             console.log('opened connection');
         }
     });
@@ -49,6 +49,6 @@ async function sock() {
         }
     });
 }
-sock().catch((err)=>{
-    console.log("Failed to initialize socket: ",err);
+sock().catch((err) => {
+    console.log("Failed to initialize socket: ", err);
 });
