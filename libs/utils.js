@@ -2,14 +2,22 @@ async function loadCore() {
     try {
         const data = await fs.readFile(corePath, 'utf8');
         global.core = JSON.parse(data);
-        console.log('Core Loaded...');
+        console.log('Core Loaded');
     } catch (err) {
         console.error('Error reading core.json:', err);
     }
 }
+
 async function setOwner(number) {
-    global.owner(number);
+    console.log(`Setting owner to number: ${number}`);
+    try {
+        await global.owner(number);   
+        console.log('Owner set successfully.');
+    } catch (error) {
+        console.error("Error adding owner: ", error);
+    }
 }
+
 async function toggleNSFW(enable) {
     try {
         const data = await fs.readFile(corePath, 'utf8');

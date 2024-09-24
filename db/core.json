@@ -54,7 +54,7 @@
       "blowjob"
     ]
   },
-  "nsfw": false,
+  "nsfw": true,
   "reply": {
     "noCommand": "Sorry command not found try to type '.menu'",
     "help": "Try to type .menu",
