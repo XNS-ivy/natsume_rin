@@ -1,4 +1,5 @@
 require("./global-var.js");
+
 const {
     default: makeWASocket,
     useMultiFileAuthState,
@@ -32,7 +33,7 @@ async function sock() {
         if (connection === 'close') {
             try {
                 setTimeout(async() => {
-                    console.error(`Disconnected due :${lastDisconnect.error}\n Time :${lastDisconnect.date}`);
+                    console.log(`Disconnected due :${lastDisconnect.error.message}\n Time :${lastDisconnect.date}`);
                     await sock();
                 }, 2000);
             } catch (err) {

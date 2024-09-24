@@ -20,11 +20,11 @@ async function chatlog(chat, rinReply, m) {
         return;
     }
     console.log(`\t! New Chat !
-        > Name \t\t: ${chat.name}
-        > Number \t: ${chat.number}
+        > Name \t\t: ${chat.name.yellow}
+        > Number \t: ${chat.number.blue}
         > On Group \t: ${chat.group}
-        > Chat Type \t: ${chat.type}
-        > Text \t\t: ${chat.text}\n`);
+        > Chat Type \t: ${chat.type.green}
+        > Text \t\t: ${chat.text.cyan}\n`);
     const text = chat.text.toLowerCase();
 
     for (const prefix of core.identity.prefix) {
@@ -102,7 +102,7 @@ async function messageProces(m) {
         number: phoneNumber,
         name: name,
         person: target,
-        group: isOnGroup
+        group: isOnGroup,
     };
 }
 

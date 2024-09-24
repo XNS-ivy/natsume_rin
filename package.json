@@ -18,6 +18,7 @@
     "cheerio": "^1.0.0-rc.12",
     "clone": "^2.1.2",
     "codec-parser": "^2.4.3",
+    "colors": "^1.4.0",
     "combined-stream": "^1.0.8",
     "content-type": "^1.0.5",
     "curve25519-js": "^0.0.4",

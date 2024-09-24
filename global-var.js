@@ -1,4 +1,5 @@
 const { RateLimiterMemory } = require('rate-limiter-flexible');
+global.colors = require('colors');
 global.fs = require("fs").promises;
 global.core = {};
 global.corePath = "./db/core.json";
