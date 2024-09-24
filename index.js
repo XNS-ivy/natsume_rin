@@ -26,7 +26,7 @@ async function sock() {
     };
 
     const rin = rin_sock(sockConfig);
-    rin.ev.on("creds.update", await saveCreds);
+    rin.ev.on("creds.update",saveCreds);
     rin.ev.on('connection.update',async (update) => {
         const { connection, lastDisconnect } = update;
         if (connection === 'close') {
