@@ -33,9 +33,9 @@ async function sock() {
         if (connection === 'close') {
             try {
                 setTimeout(async() => {
-                    console.log(`Disconnected due :${lastDisconnect.error.message}\n Time :${lastDisconnect.date}`);
+                    console.error(`Disconnected due :${lastDisconnect.error.message}\n Time :${lastDisconnect.date}\n`);
                     await sock();
-                }, 2000);
+                }, 5000);
             } catch (err) {
                 console.error("Error Reconnect : ", err);
             }
@@ -68,4 +68,25 @@ loadCore().catch((err) => {
 });
 sock().catch((err) => {
     console.log("Failed to initialize socket: ", err);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('An unhandled exception occurred:', err.message);
+    console.error(err.stack);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('An unhandled promise rejection occurred:', reason);
+    process.exit(1);
+});
+
+process.on('SIGINT', () => {
+    console.log('Rin will terminated are you sure?'.yellow);
+    process.exit(0);
+});
+
+process.on('warning', (warning) => {
+    console.warn(`Warning: ${warning.name} - ${warning.message}`);
+    console.warn(warning.stack);
 });
