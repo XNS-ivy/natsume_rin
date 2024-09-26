@@ -19,12 +19,24 @@ async function chatlog(chat, rinReply, m) {
     if (core.bans.includes(chat.number)) {
         return;
     }
-    console.log(`\t! New Chat !
-        > Name \t\t: ${chat.name.yellow}
-        > Number \t: ${chat.number.blue}
-        > On Group \t: ${chat.group}
-        > Chat Type \t: ${chat.type.green}
-        > Text \t\t: ${chat.text.cyan}\n`);
+    const mmg = {
+        l1: "\t! New Chat !\n",
+        l2: "> Name \t\t: ",
+        l3: "> Number \t: ",
+        l4: "> On Group \t: ",
+        l5: "> Chat Type \t: ",
+        l6: "> Text \t\t: "
+    };
+    const msgMap = {
+        l1: mmg.l1.bold.brightRed.bgRed,
+        l2: mmg.l2.bold.brightYellow+chat.name.yellow,
+        l3: mmg.l3.bold.brightBlue+chat.number.blue,
+        l4: mmg.l4.bold.brightYellow+String(chat.group).brightYellow,
+        l5: mmg.l5.bold.brightGreen+chat.type.green,
+        l6: mmg.l6.bold.brightMagenta+chat.text.magenta+"\n",
+    }
+    const loggingmsg = Object.values(msgMap).join('\n');
+    console.log(loggingmsg);
     const text = chat.text.toLowerCase();
 
     for (const prefix of core.identity.prefix) {
