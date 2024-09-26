@@ -44,9 +44,9 @@ async function sock() {
             const connect = `Connection is open\n` +
                 `Number: ${number}\n` +
                 `Name: ${rin.user.name}\n\n`;
-            console.log(connect);
+            console.log(connect.yellow);
             try {
-                console.log("Adding owner number...");
+                console.log("Adding owner number...".red);
                 await setOwner(number);
             } catch (error) {
                 console.error("Error adding owner number: ", error);

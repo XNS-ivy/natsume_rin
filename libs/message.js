@@ -20,20 +20,20 @@ async function chatlog(chat, rinReply, m) {
         return;
     }
     const mmg = {
-        l1: "\t! New Chat !\n",
-        l2: "> Name \t\t: ",
-        l3: "> Number \t: ",
-        l4: "> On Group \t: ",
-        l5: "> Chat Type \t: ",
-        l6: "> Text \t\t: "
+        l1: "\t! NEW CHAT !\n",
+        l2: "> NAME \t\t",
+        l3: "> NUMBER \t",
+        l4: "> ON GROUP? \t",
+        l5: "> CHAT TYPE \t",
+        l6: "> TEXT \t\t"
     };
     const msgMap = {
         l1: mmg.l1.bold.brightRed.bgRed,
-        l2: mmg.l2.bold.brightYellow+chat.name.yellow,
-        l3: mmg.l3.bold.brightBlue+chat.number.blue,
-        l4: mmg.l4.bold.brightYellow+String(chat.group).brightYellow,
-        l5: mmg.l5.bold.brightGreen+chat.type.green,
-        l6: mmg.l6.bold.brightMagenta+chat.text.magenta+"\n",
+        l2: mmg.l2.bold.bgYellow+": "+chat.name.yellow,
+        l3: mmg.l3.bold.bgBlue+": "+chat.number.blue,
+        l4: mmg.l4.bold.bgYellow+": "+String(chat.group).brightYellow,
+        l5: mmg.l5.bold.bgGreen+": "+chat.type.green,
+        l6: mmg.l6.bold.bgMagenta+": "+chat.text.magenta+"\n",
     }
     const loggingmsg = Object.values(msgMap).join('\n');
     console.log(loggingmsg);
