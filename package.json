@@ -45,7 +45,6 @@
     "media-typer": "^1.1.0",
     "mime-db": "^1.52.0",
     "mime-types": "^2.1.35",
-    "mongodb": "^6.9.0",
     "mpg123-decoder": "^0.4.12",
     "ms": "^2.1.2",
     "music-metadata": "^7.14.0",
