@@ -97,7 +97,7 @@ async function messageProces(m) {
     const getText = getType == "conversation" ? m.message.conversation :
         getType == "extendedTextMessage" ? m.message.extendedTextMessage.text :
             getType == "imageMessage" ? m.message.imageMessage.caption :
-                getType == "stickerMessage" ? "*Sticker*" : getType == "videoMessage" ? "" : "";
+                getType == "stickerMessage" ? "*Sticker*" : getType == "videoMessage" ? "*Video*" : "";
     if (getType == "extendedTextMessage") {
         WA_DEFAULT_EPHEMERAL = 604800;
     } else {
@@ -105,7 +105,7 @@ async function messageProces(m) {
     }
     const getPhoneNumber = m.key.participant || m.key.remoteJid;
     const phoneNumber = getPhoneNumber.split('@')[0];
-    const name = m.pushName;
+    const name = m.pushName == undefined ? "" : m.pushName;
     const target = m.key.remoteJid;
     const isOnGroup = m.key.participant !== undefined && m.key.participant !== "";
     return {
